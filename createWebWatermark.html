@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
         <style>
-            div.container {
+            #container {
                 position: fixed;
                 left: 0;
                 top: 0;
@@ -17,7 +17,7 @@
                 z-index: 9999;
                 pointer-events: none;
             }
-            .text{
+            #text {
                 color: black;
                 font-size: 50px;
                 position: absolute;
@@ -29,8 +29,34 @@
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="text">徐腾nb</div>
+        <div id="container">
+            <div id="text">测试</div>
         </div>
+
+        <script>
+            let a = document.getElementById("container")
+            let target = document.getElementById("text")
+            const config = { attributes: true, childList: true, subtree: true }
+            const observer = new MutationObserver((mutationList, observer) => {
+                console.log("1", mutationList, observer)
+                if (mutationList[0].type === "childList" && mutationList[0].removedNodes.length === 1) {
+                    console.log(2)
+                    let newDiv = document.createElement("div")
+                    newDiv.id = "container"
+                    document.body.appendChild(newDiv)
+                    newDiv.appendChild(target)
+                    return
+                }
+                if (mutationList[0].type === "attributes" && mutationList[0].attributeName === "class") {
+                    a.classList.remove("__web-inspector-hide-shortcut__")
+                    return
+                }
+                if (mutationList[0].type === "attributes" && mutationList[0].attributeName === "style") {
+                    a.style.display = ""
+                    return
+                }
+            })
+            observer.observe(document.body, config)
+        </script>
     </body>
 </html>
